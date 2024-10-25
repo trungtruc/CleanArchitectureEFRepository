@@ -20,9 +20,8 @@ namespace Infrastructure.Repositories
 
         public async Task<Category> GetCategoryByIdAsync(int id)
         {
-            var category = await _context.Categories
-                .Include(p => p.Products)
-                .FirstAsync(p => p.Id == id);
+            var category = await _context.Set<Category>()
+                .FindAsync(id);
             return category;
         }
     }

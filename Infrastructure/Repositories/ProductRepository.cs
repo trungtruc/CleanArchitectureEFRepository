@@ -21,7 +21,7 @@ namespace Infrastructure.Repositories
         public async Task<Product> GetProductByIdAsync(int id)
         {
             return await _context.Products
-                .Include(p => p.ProductLogs)
+                .Include(p => p.Category)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
     }

@@ -2,6 +2,7 @@
 using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WebAPI.Dtos.Category;
 
 namespace WebAPI.Controllers
 {
@@ -14,6 +15,11 @@ namespace WebAPI.Controllers
         {
             _categoryService = categoryService;
         }
+        //[HttpGet]
+        //public async Task<IActionResult> GetAll()
+        //{
+        //    var categories = _categoryService.GetAll
+        //}
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> Get(int id)
@@ -22,7 +28,7 @@ namespace WebAPI.Controllers
             return Ok(category);
         }
         [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody]Category category)
+        public async Task<IActionResult> Add([FromBody]CreateCategoryRequest category)
         {
             await _categoryService.AddAsync(category);
             return Ok();

@@ -12,12 +12,10 @@ namespace Application.Services
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
-        private readonly IRepository<ProductLog> _productLogRepository;        
 
-        public ProductService(IProductRepository productRepository, IRepository<ProductLog> productLogRepository)
+        public ProductService(IProductRepository productRepository)
         {
             _productRepository = productRepository;
-            _productLogRepository = productLogRepository;
         }
 
         public async Task<IEnumerable<Product>> GetProductsAsync() =>
@@ -28,15 +26,7 @@ namespace Application.Services
 
         public async Task AddProductAsync(Product product)
         {
-            await _productRepository.AddAsync(product);
-            ProductLog productLog = new ProductLog()
-            {
-                ProductId = product.Id,
-                Action = "Create",
-                Changes = $"Product {product.Name} was created.",
-                Timestamp = DateTime.Now
-            };
-            await _productLogRepository.AddAsync(productLog);
+            await _productRepository.AddAsync(product);            
         }            
 
         public async Task UpdateProductAsync(Product product) =>

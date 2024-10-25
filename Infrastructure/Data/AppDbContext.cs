@@ -1,5 +1,8 @@
-﻿using Domain.Entities;
+﻿using Domain.Common;
+using Domain.Entities;
+using Infrastructure.Data.Configurations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,29 +14,26 @@ namespace Infrastructure.Data
     public class AppDbContext : DbContext
     {
         public DbSet<Product> Products { get; set; }
-        public DbSet<ProductLog> ProductLogs { get; set; }
         public DbSet<Category> Categories { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
             
         }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ProductLog>()
-                .HasOne(p => p.Product) // Liên kết ProductLog với Product
-                .WithMany(p => p.ProductLogs) // Một Product có nhiều Log
-                .HasForeignKey(p => p.ProductId) // Khóa ngoại
-                .OnDelete(DeleteBehavior.Cascade); // Hành vi xóa (Cascade để xóa các log nếu Product bị xóa)
+            // Áp dụng cấu hình dùng chung cho các bảng kế thừa
+            modelBuilder.ApplyConfiguration(new AuditableEntityConfiguration<Product>());
+            modelBuilder.ApplyConfiguration(new AuditableEntityConfiguration<Category>());
 
-            modelBuilder.Entity<Product>()
-                .HasOne(p => p.Category)
-                .WithMany()
-                .HasForeignKey(p => p.CategoryId)
-                .OnDelete(DeleteBehavior.Cascade);
+            // Table Products            
+            modelBuilder.ApplyConfiguration(new ProductEntityConfiguration());
+
+            // Table Categories
+            modelBuilder.ApplyConfiguration(new CategoryEntityConfiguration());
+
 
             base.OnModelCreating(modelBuilder);
-
-
         }
     }
 }
